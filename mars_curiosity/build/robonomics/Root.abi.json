@@ -1,0 +1,75 @@
+{
+	"ABI version": 2,
+	"header": ["time"],
+	"functions": [
+		{
+			"name": "constructor",
+			"inputs": [
+				{"name":"_xrt","type":"address"},
+				{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"}],"name":"toMint","type":"tuple[]"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "createLighthouse",
+			"inputs": [
+				{"name":"_answer_id","type":"uint32"},
+				{"name":"lighthouseCode","type":"cell"},
+				{"name":"value","type":"uint128"},
+				{"components":[{"name":"valuePerQuota","type":"uint128"},{"name":"timeout","type":"uint32"}],"name":"params","type":"tuple"},
+				{"name":"name","type":"bytes"}
+			],
+			"outputs": [
+				{"name":"value0","type":"address"}
+			]
+		},
+		{
+			"name": "mint_gas",
+			"inputs": [
+				{"name":"to","type":"address"},
+				{"name":"gas_spent","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "isLighthouse",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"isLighthouse","type":"map(address,bool)"}
+			]
+		},
+		{
+			"name": "lighthouseCodeHash",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"lighthouseCodeHash","type":"uint256"}
+			]
+		},
+		{
+			"name": "xrt",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"xrt","type":"address"}
+			]
+		}
+	],
+	"data": [
+		{"key":1,"name":"lighthouseCodeHash","type":"uint256"}
+	],
+	"events": [
+		{
+			"name": "NewLighthouse",
+			"inputs": [
+				{"name":"lighthouse","type":"address"},
+				{"name":"name","type":"bytes"}
+			],
+			"outputs": [
+			]
+		}
+	]
+}

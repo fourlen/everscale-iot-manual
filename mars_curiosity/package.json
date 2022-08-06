@@ -1,0 +1,23 @@
+{
+  "name": "Robonomics_FreeTon",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "WTFPL",
+  "dependencies": {
+    "@eversdk/appkit": "^0.3.1",
+    "@eversdk/core": "^1.36.1",
+    "@eversdk/lib-node": "^1.36.1",
+    "@tonclient/appkit": "^0.2.0",
+    "@tonclient/core": "^1.15.0",
+    "@tonclient/lib-node": "^1.15.0"
+  },
+  "devDependencies": {
+    "tondev": "^0.6.0"
+  }
+}

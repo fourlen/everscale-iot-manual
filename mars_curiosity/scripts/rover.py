@@ -10,6 +10,8 @@ from os import path, remove
 from std_msgs.msg import Float64
 # from substrateinterface import SubstrateInterface, Keypair
 from time import sleep
+from loguru import logger
+
 
 '''
 Robonomics functions and class for working with substrate
@@ -26,9 +28,9 @@ def read_yaml_file(yaml_path: str) -> tp.Dict or None:
     -------
     yaml file contains as dictionary
     """
-    rospy.loginfo(f"Reading .yaml file {yaml_path}")
+    logger.info(f"Reading .yaml file {yaml_path}")
     if not path.exists(yaml_path):
-        rospy.logerr(f"{yaml_path} not found")
+        logger.error(f"{yaml_path} not found")
         return None
 
     with open(yaml_path, "r") as file:
@@ -36,7 +38,7 @@ def read_yaml_file(yaml_path: str) -> tp.Dict or None:
             dictionary = yaml.safe_load(file)
             return dictionary
         except Exception as Err:
-            rospy.logerr(f"Error loading {yaml_path}: {Err}")
+            logger.error(f"Error loading {yaml_path}: {Err}")
             return None
 
 
@@ -46,7 +48,7 @@ def read_yaml_file(yaml_path: str) -> tp.Dict or None:
 #     """
 #     try:
 
-#         rospy.loginfo("Establishing connection to substrate node")
+#         logger.info("Establishing connection to substrate node")
 #         substrate = SubstrateInterface(
 #             url=url,
 #             ss58_format=32,
@@ -74,10 +76,10 @@ def read_yaml_file(yaml_path: str) -> tp.Dict or None:
 #                 }
 #             },
 #         )
-#         rospy.loginfo("Successfully established connection to substrate node")
+#         logger.info("Successfully established connection to substrate node")
 #         return substrate
 #     except Exception as e:
-#         rospy.logerr(f"Failed to connect to substrate: {e}")
+#         logger.error(f"Failed to connect to substrate: {e}")
 #         return None
 
 
@@ -98,11 +100,11 @@ def write_datalog(substrate, seed: str, data: str) -> str or None:
     try:
         keypair = Keypair.create_from_mnemonic(seed, ss58_format=32)
     except Exception as e:
-        rospy.logerr(f"Failed to create keypair for recording datalog: \n{e}")
+        logger.error(f"Failed to create keypair for recording datalog: \n{e}")
         return None
 
     try:
-        rospy.loginfo("Creating substrate call for recording datalog")
+        logger.info("Creating substrate call for recording datalog")
         call = substrate.compose_call(
             call_module="Datalog",
             call_function="record",
@@ -110,21 +112,21 @@ def write_datalog(substrate, seed: str, data: str) -> str or None:
                 'record': data
             }
         )
-        rospy.loginfo(f"Successfully created a call for recording datalog:\n{call}")
-        rospy.loginfo("Creating extrinsic for recording datalog")
+        logger.info(f"Successfully created a call for recording datalog:\n{call}")
+        logger.info("Creating extrinsic for recording datalog")
         extrinsic = substrate.create_signed_extrinsic(call=call, keypair=keypair)
     except Exception as e:
-        rospy.logerr(f"Failed to create an extrinsic for recording datalog: {e}")
+        logger.error(f"Failed to create an extrinsic for recording datalog: {e}")
         return None
 
     try:
-        rospy.loginfo("Submitting extrinsic for recording datalog")
+        logger.info("Submitting extrinsic for recording datalog")
         receipt = substrate.submit_extrinsic(extrinsic, wait_for_inclusion=True)
-        rospy.loginfo(f"Extrinsic {receipt.extrinsic_hash} for recording datalog sent and included in block"
+        logger.info(f"Extrinsic {receipt.extrinsic_hash} for recording datalog sent and included in block"
                       f" {receipt.block_hash}")
         return receipt.extrinsic_hash
     except Exception as e:
-        rospy.logerr(f"Failed to submit extrinsic for recording datalog: {e}")
+        logger.error(f"Failed to submit extrinsic for recording datalog: {e}")
         return None
 
 
@@ -141,14 +143,14 @@ def pin_file_in_ipfs(filepath: str, remove_after=True) -> str or None:
     """
 
     try:
-        rospy.loginfo(f"Pushing file {filepath} to IPFS")
+        logger.info(f"Pushing file {filepath} to IPFS")
         ipfs_client = ipfshttpclient.connect()
         res = ipfs_client.add(filepath)
         hash = res["Hash"]
         ipfs_client.close()
-        rospy.loginfo(f"File pushed to IPFS. Hash is {hash}")
+        logger.info(f"File pushed to IPFS. Hash is {hash}")
     except Exception as e:
-        rospy.logerr(f"Failed to push file to local IPFS node. Error: {e}")
+        logger.error(f"Failed to push file to local IPFS node. Error: {e}")
         hash = None
         try:
             ipfs_client.close()
@@ -158,9 +160,9 @@ def pin_file_in_ipfs(filepath: str, remove_after=True) -> str or None:
     if remove_after:
         try:
             remove(filepath)
-            rospy.loginfo("File removed")
+            logger.info("File removed")
         except Exception as e:
-            rospy.logerr(f"Failed to remove file: {e}")
+            logger.error(f"Failed to remove file: {e}")
 
     return hash
 
@@ -177,17 +179,17 @@ class LaunchTracker:
         :param source_address: address from which tre launch transaction is supposed
         :param target_address: robot address
         """
-        rospy.loginfo("Creating an instance of a LaunchTracker class")
+        logger.info("Creating an instance of a LaunchTracker class")
         self.substrate = substrate
         self.employer_address = source_address
         self.robot_address: str = target_address
 
-        rospy.loginfo(f"Initiating new blocks subscriber for launch commands tracking")
+        logger.info(f"Initiating new blocks subscriber for launch commands tracking")
         self.launch_command_event = threading.Event()
         self.subscriber = threading.Thread(target=self._obtain_launch_commands)
         self.subscriber.start()
 
-        rospy.loginfo("Block subscriber started. Waiting for launch commands")
+        logger.info("Block subscriber started. Waiting for launch commands")
 
     def _subscription_handler(self, obj, update_nr, subscription_id):
         """
@@ -202,12 +204,12 @@ class LaunchTracker:
                 print(ce.params)
             if ce.value["event_id"] == "NewLaunch" and ce.params[0]["value"] == self.employer_address \
                     and ce.params[1]["value"] == self.robot_address and ce.params[2]["value"] is True:  # yes/no
-                rospy.loginfo(f"\"ON\" launch command from employer.")
+                logger.info(f"\"ON\" launch command from employer.")
                 self.launch_command_event.set()  # trigger python Event in main loop
 
             elif ce.value["event_id"] == "NewLaunch" and ce.params[0]["value"] != self.employer_address \
                     and ce.params[1]["value"] == self.robot_address:
-                rospy.loginfo(f"Launch command not from employer. Idle")
+                logger.info(f"Launch command not from employer. Idle")
 
     def _obtain_launch_commands(self):
         """
@@ -236,9 +238,9 @@ class Robot:
         self.dirname = path.dirname(__file__) + '/../'
 
         rospy.init_node('sample_controller', anonymous=False)
-        rospy.loginfo("Node initialized")
+        logger.info("Node initialized")
 
-        rospy.loginfo("Parsing Config")
+        logger.info("Parsing Config")
         # dirname = path.dirname(__file__) + '/../'
         # config = read_yaml_file(dirname + "src/config.yaml")
 
@@ -246,15 +248,15 @@ class Robot:
         # self.curiosity_seed = config['curiosity_seed']
         # self.employer_address = config['employer_address']
         # self.node_address = config['node_address']
-        rospy.loginfo("Parsing completed")
+        logger.info("Parsing completed")
 
-        rospy.loginfo('Initiating substrate connection for launch tracking and datalogs writing')
+        logger.info('Initiating substrate connection for launch tracking and datalogs writing')
 
         # self.substrate_launch = substrate_connection(self.node_address)
         # self.substrate_datalog = substrate_connection(self.node_address)
         # launch_tracker = LaunchTracker(self.substrate_launch, self.employer_address, self.curiosity_address)
 
-        rospy.loginfo('Waiting job command from employer, press Ctrl+\\ to interrupt')
+        logger.info('Waiting job command from employer, press Ctrl+\\ to interrupt')
         
         self.work()
 
@@ -269,27 +271,27 @@ class Robot:
         Curiosity job function. Arm, collect states and move for 1 min
         :return: False if error or nothing is success
         """
-        rospy.loginfo("Start Working")
+        logger.info("Start Working")
 
-        rospy.loginfo("Arm tools command")
+        logger.info("Arm tools command")
         self.raise_up()
 
-        rospy.loginfo("Collect state command")
+        logger.info("Collect state command")
         self.stop_reading_state = False
         self.states_thread.start()
 
-        rospy.loginfo("Move command")
+        logger.info("Move command")
         self.move(True)
 
         sleep(60)
-        rospy.loginfo("Stop movement command")
+        logger.info("Stop movement command")
         self.move(False)
 
-        rospy.loginfo("Stop collecting state command")
+        logger.info("Stop collecting state command")
         self.stop_reading_state = True
         self.states_thread.join()
 
-        rospy.loginfo("Pushing states to file")
+        logger.info("Pushing states to file")
 
         try:
             f = open(self.dirname + '/file_states.txt', 'w')
@@ -298,22 +300,22 @@ class Robot:
             f.close()
             self.state = []
         except Exception as e:
-            rospy.logerr(f"Failed to create states file: {e}")
+            logger.error(f"Failed to create states file: {e}")
             self.state = []
             return False
 
-        rospy.loginfo("Pushing file to IPFS")
+        logger.info("Pushing file to IPFS")
         hash = pin_file_in_ipfs(self.dirname + '/file_states.txt', remove_after=True)
         if not hash:
             return False
 
-        rospy.loginfo("Publishing IPFS hash to chain")
+        logger.info("Publishing IPFS hash to chain")
         tr_hash = write_datalog(self.substrate_datalog, self.curiosity_seed, hash)
         if not tr_hash:
             return False
 
-        rospy.loginfo("Published to chain! Transaction hash is " + tr_hash)
-        rospy.loginfo("Job Done. Check DAPP for IPFS data hash")
+        logger.info("Published to chain! Transaction hash is " + tr_hash)
+        logger.info("Job Done. Check DAPP for IPFS data hash")
 
     def callback_wheel_state(self, data: tp.Dict):
         """
@@ -377,5 +379,4 @@ class Robot:
         move.publish(circle_command)
 
 
-if __name__ == '__main__':
-    robot = Robot()
+robot = Robot()
