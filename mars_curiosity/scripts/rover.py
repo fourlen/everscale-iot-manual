@@ -83,51 +83,51 @@ def read_yaml_file(yaml_path: str) -> tp.Dict or None:
 #         return None
 
 
-def write_datalog(substrate, seed: str, data: str) -> str or None:
-    """
-    Write any string to datalog
-    Parameters
-    ----------
-    substrate : substrate connection instance
-    seed : mnemonic seed of account which writes datalog
-    data : data tp be stored as datalog
-    Returns
-    -------
-    Hash of the datalog transaction
-    """
+# def write_datalog(substrate, seed: str, data: str) -> str or None:
+#     """
+#     Write any string to datalog
+#     Parameters
+#     ----------
+#     substrate : substrate connection instance
+#     seed : mnemonic seed of account which writes datalog
+#     data : data tp be stored as datalog
+#     Returns
+#     -------
+#     Hash of the datalog transaction
+#     """
 
-    # create keypair
-    try:
-        keypair = Keypair.create_from_mnemonic(seed, ss58_format=32)
-    except Exception as e:
-        logger.error(f"Failed to create keypair for recording datalog: \n{e}")
-        return None
+#     # create keypair
+#     try:
+#         keypair = Keypair.create_from_mnemonic(seed, ss58_format=32)
+#     except Exception as e:
+#         logger.error(f"Failed to create keypair for recording datalog: \n{e}")
+#         return None
 
-    try:
-        logger.info("Creating substrate call for recording datalog")
-        call = substrate.compose_call(
-            call_module="Datalog",
-            call_function="record",
-            call_params={
-                'record': data
-            }
-        )
-        logger.info(f"Successfully created a call for recording datalog:\n{call}")
-        logger.info("Creating extrinsic for recording datalog")
-        extrinsic = substrate.create_signed_extrinsic(call=call, keypair=keypair)
-    except Exception as e:
-        logger.error(f"Failed to create an extrinsic for recording datalog: {e}")
-        return None
+#     try:
+#         logger.info("Creating substrate call for recording datalog")
+#         call = substrate.compose_call(
+#             call_module="Datalog",
+#             call_function="record",
+#             call_params={
+#                 'record': data
+#             }
+#         )
+#         logger.info(f"Successfully created a call for recording datalog:\n{call}")
+#         logger.info("Creating extrinsic for recording datalog")
+#         extrinsic = substrate.create_signed_extrinsic(call=call, keypair=keypair)
+#     except Exception as e:
+#         logger.error(f"Failed to create an extrinsic for recording datalog: {e}")
+#         return None
 
-    try:
-        logger.info("Submitting extrinsic for recording datalog")
-        receipt = substrate.submit_extrinsic(extrinsic, wait_for_inclusion=True)
-        logger.info(f"Extrinsic {receipt.extrinsic_hash} for recording datalog sent and included in block"
-                      f" {receipt.block_hash}")
-        return receipt.extrinsic_hash
-    except Exception as e:
-        logger.error(f"Failed to submit extrinsic for recording datalog: {e}")
-        return None
+#     try:
+#         logger.info("Submitting extrinsic for recording datalog")
+#         receipt = substrate.submit_extrinsic(extrinsic, wait_for_inclusion=True)
+#         logger.info(f"Extrinsic {receipt.extrinsic_hash} for recording datalog sent and included in block"
+#                       f" {receipt.block_hash}")
+#         return receipt.extrinsic_hash
+#     except Exception as e:
+#         logger.error(f"Failed to submit extrinsic for recording datalog: {e}")
+#         return None
 
 
 def pin_file_in_ipfs(filepath: str, remove_after=True) -> str or None:
@@ -310,11 +310,13 @@ class Robot:
             return False
 
         logger.info("Publishing IPFS hash to chain")
-        tr_hash = write_datalog(self.substrate_datalog, self.curiosity_seed, hash)
-        if not tr_hash:
-            return False
+        # tr_hash = write_datalog(self.substrate_datalog, self.curiosity_seed, hash)
+        # if not tr_hash:
+        #     return False
 
-        logger.info("Published to chain! Transaction hash is " + tr_hash)
+        logger.info(f'IPFS hash is {hash}')
+
+        # logger.info("Published to chain! Transaction hash is " + hash)
         logger.info("Job Done. Check DAPP for IPFS data hash")
 
     def callback_wheel_state(self, data: tp.Dict):
