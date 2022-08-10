@@ -61,7 +61,7 @@ async function signHash(client, hash, keys) {
     })).boc;
 }
 
-export async function main(client, liabilityHash) {
+async function finalizeLiability(client, liabilityHash, result) {
     const keys = JSON.parse(fs.readFileSync(keysFile, "utf8"));
     const simpleWallet = new Account(SimpleWalletContract, {signer: signerKeys(keys), client: client, initData: {nonce: 0} });
     const { root, xrt } = await constructContracts(client, keys)
@@ -72,7 +72,7 @@ export async function main(client, liabilityHash) {
 
     const dataCell = (await client.boc.encode_boc({
         builder: [
-            bytes(Buffer.from('Super result')),
+            bytes(Buffer.from(result)),
             u256(liabilityHash),
             b1,
             addrInt(await root.getAddress())
@@ -133,22 +133,26 @@ export async function main(client, liabilityHash) {
     console.log(res.decoded.output.currentQuota)
 }
 
-(async () => {
-    try {
-        TonClient.useBinaryLibrary(libNode);
-        const client = new TonClient({
-            network: {
-                endpoints: config['network']['endpoints'],
-            }
-        });
-        console.log("Hello TON!");
-        if (process.argv.length < 3) {
-            console.log('Please specify liability hash as CLI agrument')
-            process.exit(1);
-        }
-        await main(client, process.argv[2]);
-        process.exit(0);
-    } catch (error) {
-        console.error(error);
-    }
-})();
+module.exports = {
+    finalizeLiability
+}
+
+// (async () => {
+//     try {
+//         TonClient.useBinaryLibrary(libNode);
+//         const client = new TonClient({
+//             network: {
+//                 endpoints: config['network']['endpoints'],
+//             }
+//         });
+//         console.log("Hello TON!");
+//         if (process.argv.length < 3) {
+//             console.log('Please specify liability hash as CLI agrument')
+//             process.exit(1);
+//         }
+//         await finalizeLiability(client, process.argv[2]);
+//         process.exit(0);
+//     } catch (error) {
+//         console.error(error);
+//     }
+// })();

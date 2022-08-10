@@ -6,14 +6,13 @@ const { LighthouseContract } = require('../artifacts/LighthouseContract.js');
 const { TonClient, signerNone, signerKeys, signerExternal, abiContract,
     builderOpInteger, builderOpCell, builderOpCellBoc, builderOpBitString } = require("@tonclient/core");
 const { constructContracts, getLighthouseAddress } = require('./common.js')
-const fs = require('fs');
 const path = require('path');
 const config = require('./config');
-import { main as finelizeLiability } from './tests/finalizeLiability';
+const { finalizeLiability } = require('./tests/finalizeLiability.js');
+const fs = require('fs');
 
 const keysFile = path.join(__dirname, '/keys.json');
 
-const PythonShell = require('python-shell').PythonShell;
 
 
 (async () => {
@@ -43,7 +42,7 @@ const PythonShell = require('python-shell').PythonShell;
                     abi: abiContract(LighthouseContract.abi),
                     message: params.result.boc,
                 }));
-            liabilityHash = decoded.value.liabilityHash;
+            const liabilityHash = decoded.value.liabilityHash;
             console.log("New liability. Hash: ", liabilityHash);
             liabilityBoc = (await lighthouse.runLocal('getLiabilityByHash', {
                 liabilityHash: liabilityHash
@@ -84,13 +83,16 @@ const PythonShell = require('python-shell').PythonShell;
                 allow_partial: true       
             })).data;
             console.log(decodedLiability);
-            if (decodedLiability.objective == 'Launch') {
+            if (decodedLiability.objective == '') {
                 console.log('Launch');
-                PythonShell.run('rover.py', null, function (err) {
-                    console.log('finished');
-                    finelizeLiability(client, liabilityHash);
+                fs.readFile('ipfs.txt', 'utf8', function (err, data) {
+                    if (err) {
+                      return console.log(err);
+                    }
+                    console.log('IPFS: ', data);
+                    finalizeLiability(client, liabilityHash, data);
                 });
-            }
+            }   
         }
     });
 

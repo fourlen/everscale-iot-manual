@@ -15,7 +15,9 @@
     "@eversdk/lib-node": "^1.36.1",
     "@tonclient/appkit": "^0.2.0",
     "@tonclient/core": "^1.15.0",
-    "@tonclient/lib-node": "^1.15.0"
+    "@tonclient/lib-node": "^1.15.0",
+    "child_process": "^1.0.2",
+    "python-shell": "^3.0.1"
   },
   "devDependencies": {
     "tondev": "^0.6.0"

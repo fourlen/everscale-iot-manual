@@ -1,9 +1,9 @@
 pragma ton-solidity >= 0.45.0;
 
-import './interface/ILiability.sol';
-import './interface/ILighthouse.sol';
-//import './Root.sol';
-import '../ERC20/IERC20.sol';
+import './interface/~ILiability.sol';
+import './interface/~ILighthouse.sol';
+//import './~Root.sol';
+import '../ERC20/~IERC20.sol';
 
 contract Lighthouse {
     event LiabilityFinalized(uint256 liabilityHash, bool success, bytes result); // Liability termination signal

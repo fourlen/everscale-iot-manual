@@ -315,6 +315,8 @@ class Robot:
         #     return False
 
         logger.info(f'IPFS hash is {hash}')
+        with open('ipfs.txt', 'w') as out:
+            out.write(hash)
 
         # logger.info("Published to chain! Transaction hash is " + hash)
         logger.info("Job Done. Check DAPP for IPFS data hash")

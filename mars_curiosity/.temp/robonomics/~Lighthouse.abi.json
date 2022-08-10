@@ -1,0 +1,273 @@
+{
+	"ABI version": 2,
+	"header": ["time"],
+	"functions": [
+		{
+			"name": "constructor",
+			"id": "0x1",
+			"inputs": [
+				{"components":[{"name":"valuePerQuota","type":"uint128"},{"name":"timeout","type":"uint32"}],"name":"params","type":"tuple"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "refillBalance",
+			"id": "0x2",
+			"inputs": [
+				{"name":"token","type":"address"},
+				{"name":"value","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "withdrawBalance",
+			"id": "0x3",
+			"inputs": [
+				{"name":"token","type":"address"},
+				{"name":"value","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "createLiability",
+			"id": "0x4",
+			"inputs": [
+				{"name":"demandCell","type":"cell"},
+				{"name":"customerSignature","type":"cell"},
+				{"name":"offerCell","type":"cell"},
+				{"name":"executorSignature","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "finalizeLiability_validatorContarct",
+			"id": "0xB",
+			"inputs": [
+				{"name":"_answer_id","type":"uint32"},
+				{"name":"result","type":"bytes"},
+				{"name":"liabilityHash","type":"uint256"},
+				{"name":"success","type":"bool"}
+			],
+			"outputs": [
+				{"name":"value0","type":"bool"}
+			]
+		},
+		{
+			"name": "finalizeLiability",
+			"id": "0x5",
+			"inputs": [
+				{"name":"dataCell","type":"cell"},
+				{"name":"signature","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "no_liabilities",
+			"id": "0x6",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "checkTimeout",
+			"id": "0x7",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "registerProvider",
+			"id": "0x8",
+			"inputs": [
+				{"name":"stake","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "refillStake",
+			"id": "0x9",
+			"inputs": [
+				{"name":"stake","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "withdrawStake",
+			"id": "0xA",
+			"inputs": [
+				{"name":"stake","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "getLiabilityByHash",
+			"id": "0xC",
+			"inputs": [
+				{"name":"liabilityHash","type":"uint256"}
+			],
+			"outputs": [
+				{"name":"value0","type":"cell"}
+			]
+		},
+		{
+			"name": "providersQueue",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"providersQueue","type":"map(uint64,address)"}
+			]
+		},
+		{
+			"name": "queuePos",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"queuePos","type":"map(address,uint64)"}
+			]
+		},
+		{
+			"name": "currentQuota",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"currentQuota","type":"uint128"}
+			]
+		},
+		{
+			"name": "lastAction",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"lastAction","type":"uint32"}
+			]
+		},
+		{
+			"name": "stakes",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"stakes","type":"map(address,uint128)"}
+			]
+		},
+		{
+			"name": "balances",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"balances","type":"map(address,map(address,uint128))"}
+			]
+		},
+		{
+			"name": "name",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"name","type":"bytes"}
+			]
+		},
+		{
+			"name": "lighthouseParams",
+			"inputs": [
+			],
+			"outputs": [
+				{"components":[{"name":"valuePerQuota","type":"uint128"},{"name":"timeout","type":"uint32"}],"name":"lighthouseParams","type":"tuple"}
+			]
+		},
+		{
+			"name": "root",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"root","type":"address"}
+			]
+		},
+		{
+			"name": "xrt",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"xrt","type":"address"}
+			]
+		},
+		{
+			"name": "hashUsed",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"hashUsed","type":"map(uint256,bool)"}
+			]
+		}
+	],
+	"data": [
+		{"key":1,"name":"name","type":"bytes"},
+		{"key":2,"name":"root","type":"address"},
+		{"key":3,"name":"xrt","type":"address"}
+	],
+	"events": [
+		{
+			"name": "LiabilityFinalized",
+			"inputs": [
+				{"name":"liabilityHash","type":"uint256"},
+				{"name":"success","type":"bool"},
+				{"name":"result","type":"bytes"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "NewLiability",
+			"inputs": [
+				{"name":"liabilityHash","type":"uint256"},
+				{"name":"demandHash","type":"uint256"},
+				{"name":"offerHash","type":"uint256"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "FineCharged",
+			"inputs": [
+				{"name":"provider","type":"address"},
+				{"name":"value","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "CurrentProviderChanged",
+			"inputs": [
+				{"name":"provider","type":"address"},
+				{"name":"quota","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "NewProvider",
+			"inputs": [
+				{"name":"provider","type":"address"},
+				{"name":"stake","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "ProviderGone",
+			"inputs": [
+				{"name":"provider","type":"address"}
+			],
+			"outputs": [
+			]
+		}
+	]
+}
