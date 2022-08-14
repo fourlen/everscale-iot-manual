@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ "$#" == 0 ]; then
-    contracts=("robonomics/Root" "robonomics/Lighthouse" "robonomics/XRT")
+    contracts=("robonomics/Root" "robonomics/Lighthouse" "robonomics/XRT" "SimpleWallet" "robonomics/validator/MultiValidatorExample")
 else
     declare -a contracts
     for contract in "$@"
@@ -16,10 +16,11 @@ do
     rm -f ../artifacts/$contract.tvc
     rm -f ../artifacts/"$contract"Contract.js
 
-    echo npx tondev sol compile ../contracts/$contract.sol
-    npx tondev sol compile ../contracts/$contract.sol &> /dev/null
-    npx tondev js wrap ../contracts/$contract.abi.json
-    mv ../contracts/$contract.abi.json ../artifacts
-    mv ../contracts/$contract.tvc ../artifacts
-    mv ../contracts/"$contract"Contract.js ../artifacts
+    echo everdev sol compile ../contracts/$contract.sol
+    everdev sol compile ../contracts/$contract.sol &> /dev/null
+    contract=$(basename ${contract})
+    everdev js wrap $contract.abi.json
+    mv $contract.abi.json ../artifacts
+    mv $contract.tvc ../artifacts
+    mv "$contract"Contract.js ../artifacts
 done

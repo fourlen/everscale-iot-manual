@@ -1,0 +1,99 @@
+{
+	"ABI version": 2,
+	"header": ["time"],
+	"functions": [
+		{
+			"name": "constructor",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "addProposal",
+			"inputs": [
+				{"name":"pubkey_id","type":"uint8"},
+				{"name":"dataCell","type":"cell"},
+				{"name":"signature","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "signProposal",
+			"inputs": [
+				{"name":"pubkey_id","type":"uint8"},
+				{"name":"dataCell","type":"cell"},
+				{"name":"signature","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "finalized",
+			"inputs": [
+				{"name":"res","type":"bool"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "lighthouse",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"lighthouse","type":"address"}
+			]
+		},
+		{
+			"name": "pubkeys",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"pubkeys","type":"map(uint8,uint256)"}
+			]
+		},
+		{
+			"name": "k",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"k","type":"uint8"}
+			]
+		}
+	],
+	"data": [
+		{"key":1,"name":"lighthouse","type":"address"},
+		{"key":2,"name":"pubkeys","type":"map(uint8,uint256)"},
+		{"key":3,"name":"k","type":"uint8"}
+	],
+	"events": [
+		{
+			"name": "NewProposal",
+			"inputs": [
+				{"name":"proposalId","type":"uint32"},
+				{"name":"pubkey_id","type":"uint8"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "NewVote",
+			"inputs": [
+				{"name":"proposalId","type":"uint32"},
+				{"name":"cnt","type":"uint8"},
+				{"name":"pubkey_id","type":"uint8"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "ProposalSend",
+			"inputs": [
+				{"name":"proposalId","type":"uint32"}
+			],
+			"outputs": [
+			]
+		}
+	]
+}
